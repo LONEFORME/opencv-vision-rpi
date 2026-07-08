@@ -1,3 +1,4 @@
 # 视觉识别系统依赖
-opencv-python>=4.7.0
-numpy>=1.21.0
+# 注意：本机为 Python 3.8，opencv-python 5.x 不再提供 cp38 预编译包，需锁定 4.x
+opencv-python>=4.7.0,<5
+numpy>=1.21.0,<2

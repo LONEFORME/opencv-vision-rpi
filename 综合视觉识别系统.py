@@ -18,8 +18,15 @@ def is_circle(contour):
     # 计算圆形度: 4*pi*A/P^2 (完美圆形为1)
     circularity = 4 * np.pi * area / (perimeter ** 2)
 
-    # 圆形度接近1且面积在合理范围内
-    return circularity > circularity_thresh and min_area < area < max_area
+    if circularity < circularity_thresh or not (min_area < area < max_area):
+        return False
+
+    # 排除明确的多边形：圆近似后顶点数很多，方块/三角等只有很少顶点
+    approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
+    if len(approx) <= 6:
+        return False
+
+    return True
 
 
 class VisionSystem:
@@ -32,6 +39,8 @@ class VisionSystem:
         self.running = False
         self.cap = None
         self.src = src  # 保存摄像头设备号/路径
+        self.static_frame = None  # 图片模式下直接载入的单帧
+        self.is_image = False     # 来源是否为单张图片
 
         self._init_camera(src)
 
@@ -60,15 +69,32 @@ class VisionSystem:
         while self.frame is None and self.running:
             time.sleep(0.1)
 
-    #初始化摄像头，默认src=0
+    #初始化摄像头/视频/图片，默认src=0(摄像头)
     def _init_camera(self, src=0):
-        """内部方法：初始化摄像头"""
-        self.cap = cv2.VideoCapture(self.src)
+        """内部方法：初始化图像来源
+        src 可为: 摄像头索引(int/数字字符串)、视频文件路径、图片文件路径
+        """
+        # 单张图片：直接读入，由捕获线程循环喂给处理线程
+        if isinstance(src, str) and src.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff')):
+            img = cv2.imread(src)
+            if img is None:
+                raise RuntimeError("无法读取图片:", src)
+            self.static_frame = img
+            self.is_image = True
+            self.cap = None
+            self.camera_open = True
+            self.running = True
+            return
+
+        # 摄像头或视频文件
+        self.cap = cv2.VideoCapture(src)
         if not self.cap.isOpened():
-            raise RuntimeError("无法打开摄像头:", self.src)
-        self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
-        self.cap.set(3, 320)
-        self.cap.set(4, 240)
+            raise RuntimeError("无法打开摄像头/视频:", src)
+        # 仅对摄像头设备设置分辨率（视频文件不改尺寸）
+        if isinstance(src, int) or (isinstance(src, str) and src.isdigit()):
+            self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
+            self.cap.set(3, 320)
+            self.cap.set(4, 240)
         self.camera_open = True
         self.running = True
 
@@ -125,15 +151,22 @@ class VisionSystem:
     #采集图像
     # 捕获线程
     def _capture(self):
-        """摄像头捕获线程"""
+        """摄像头/视频/图片 捕获线程"""
         while self.running:
             if self.camera_open:
-                ret, frame = self.cap.read()
-                if ret:
+                if self.cap is not None:
+                    ret, frame = self.cap.read()
+                    if ret:
+                        with self.frame_lock:
+                            self.frame = frame
+                    else:
+                        # 视频播完：保持最后一帧，便于持续检测/显示
+                        time.sleep(0.1)
+                elif self.static_frame is not None:
+                    # 图片模式：循环喂入同一帧
                     with self.frame_lock:
-                        self.frame = frame
-                else:
-                    time.sleep(0.1)
+                        self.frame = self.static_frame.copy()
+                    time.sleep(0.03)
             else:
                 time.sleep(0.1)
 

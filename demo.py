@@ -1,14 +1,15 @@
 """综合视觉识别系统 —— 调用示例
 
-运行:  python demo.py
-退出:  按 q 键
+用法:
+    python demo.py              # 默认尝试摄像头 0；无摄像头则回退到 test_circle.png
+    python demo.py 1            # 使用摄像头 1
+    python demo.py video.mp4    # 识别视频文件
+    python demo.py test.jpg     # 识别单张图片
 
-说明:
-- VisionSystem 内部已用独立线程持续采集帧并做预处理；
-- 本示例在主线循环里取帧，调用其 detect_* 方法做圆/形状/颜色识别并实时显示；
-- src 可改为视频文件路径或 RTSP/HTTP 流地址。
+退出:  按 q 键
 """
 
+import sys
 import time
 
 import cv2
@@ -17,8 +18,23 @@ from 综合视觉识别系统 import VisionSystem
 
 
 def main():
-    # 初始化视觉系统（src=0 为默认摄像头）
-    vs = VisionSystem(src=0)
+    # 解析图像来源
+    if len(sys.argv) > 1:
+        arg = sys.argv[1]
+        src = int(arg) if arg.isdigit() else arg
+    else:
+        src = 0
+
+    # 打开来源；摄像头不可用时回退到内置测试图片
+    try:
+        vs = VisionSystem(src=src)
+    except RuntimeError as e:
+        if src == 0:
+            print(f"[警告] 摄像头不可用：{e}")
+            print("[信息] 回退到内置测试图片 test_circle.png")
+            vs = VisionSystem(src="test_circle.png")
+        else:
+            raise
 
     try:
         while True:

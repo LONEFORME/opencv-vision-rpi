@@ -46,3 +46,6 @@ runs/
 *.bmp
 *.mp4
 *.avi
+
+# 例外：内置测试图片需要随仓库提供，便于无摄像头时验证
+!test_circle.png
