@@ -10,11 +10,15 @@
 """
 
 import sys
+import os
 import time
 
 import cv2
 
-from 综合视觉识别系统 import VisionSystem
+# 确保能找到 src 模块（从项目根目录运行）
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from src.综合视觉识别系统 import VisionSystem
 
 
 def main():
@@ -32,7 +36,7 @@ def main():
         if src == 0:
             print(f"[警告] 摄像头不可用：{e}")
             print("[信息] 回退到内置测试图片 test_circle.png")
-            vs = VisionSystem(src="test_circle.png")
+            vs = VisionSystem(src=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "test_circle.png"))
         else:
             raise
 

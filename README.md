@@ -1,9 +1,16 @@
+<div align="center">
+
 # ZCodeProject — 综合视觉识别系统
 
 > OpenCV · 形状识别 · 颜色检测 · 树莓派 GPIO 控制
 
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?logo=python)](https://www.python.org/)
 [![OpenCV](https://img.shields.io/badge/OpenCV-4.7+-5C3EE8?logo=opencv)](https://opencv.org/)
+[![License](https://img.shields.io/badge/License-MIT-blue)](#许可证)
+
+[快速开始](#-快速开始) · [功能特性](#-功能特性) · [项目结构](#-项目结构) · [API 文档](#-api-使用) · [硬件控制](#-硬件控制)
+
+</div>
 
 ---
 
@@ -32,15 +39,23 @@
 
 ```
 ZCodeProject/
-├── 综合视觉识别系统.py    # 核心模块：VisionSystem 类
-├── demo.py               # 调用示例（摄像头/视频/图片）
-├── make_sample.py         # 测试图生成脚本
-├── test_circle.png        # 内置测试图片（无需摄像头即可验证）
-├── pwm开关控制.py         # 树莓派风扇 PWM 控制（INA=21, INB=20）
-├── 风扇转.py              # 同上（副本）
-├── 蜂鸣器通断.py          # 树莓派蜂鸣器控制（BCM 14）
-├── requirements.txt       # Python 依赖
-└── .gitignore
+├── 📁 src/                     # 核心模块
+│   └── 综合视觉识别系统.py      # VisionSystem 类（形状/颜色/圆形识别）
+│
+├── 📁 examples/                # 示例脚本
+│   ├── demo.py                 # 调用示例（摄像头/视频/图片）
+│   └── make_sample.py          # 测试图生成脚本
+│
+├── 📁 hardware/                # 硬件控制
+│   ├── pwm开关控制.py           # 树莓派风扇 PWM 控制（INA=21, INB=20）
+│   └── 蜂鸣器通断.py            # 树莓派蜂鸣器控制（BCM 14）
+│
+├── 📁 assets/                  # 资源文件
+│   └── test_circle.png         # 内置测试图片（无需摄像头即可验证）
+│
+├── 📄 requirements.txt         # Python 依赖
+├── 📄 .gitignore               # Git 忽略规则
+└── 📄 README.md                # 项目说明
 ```
 
 ---
@@ -57,15 +72,17 @@ pip install -r requirements.txt
 
 ### 运行示例
 
+> ⚠️ **从项目根目录运行**
+
 ```bash
 # 使用摄像头（默认索引 0）
-python demo.py 0
+python examples/demo.py 0
 
 # 使用视频文件
-python demo.py video.mp4
+python examples/demo.py video.mp4
 
-# 使用图片（摄像头不可用时自动回退到 test_circle.png）
-python demo.py
+# 使用图片（摄像头不可用时自动回退到 assets/test_circle.png）
+python examples/demo.py
 ```
 
 运行后实时窗口显示识别结果，按 `q` 退出。
@@ -73,8 +90,8 @@ python demo.py
 ### 生成测试图
 
 ```bash
-python make_sample.py
-# 生成 test_circle.png（含实心红圆、蓝色方块、紫色三角、暗绿方块）
+python examples/make_sample.py
+# 生成 assets/test_circle.png（含实心红圆、蓝色方块、紫色三角、暗绿方块）
 ```
 
 ---
@@ -82,7 +99,7 @@ python make_sample.py
 ## 🔧 API 使用
 
 ```python
-from 综合视觉识别系统 import VisionSystem
+from src.综合视觉识别系统 import VisionSystem
 
 vs = VisionSystem()
 vs.open_camera(0)  # 打开摄像头
@@ -105,7 +122,7 @@ vs.release()
 ### 风扇 PWM 控制
 
 ```python
-from pwm开关控制 import fan_forward, fan_reverse, fan_stop
+from hardware.pwm开关控制 import fan_forward, fan_reverse, fan_stop
 
 fan_forward(80)   # 正转 80% 占空比
 fan_stop()         # 停止
@@ -115,7 +132,7 @@ fan_reverse(50)    # 反转 50%
 ### 蜂鸣器控制
 
 ```python
-from 蜂鸣器通断 import buzzer_on, buzzer_off
+from hardware.蜂鸣器通断 import buzzer_on, buzzer_off
 
 buzzer_on()   # 响
 buzzer_off()  # 停
@@ -134,10 +151,45 @@ buzzer_off()  # 停
 
 ---
 
+## ❓ 常见问题
+
+<details>
+<summary><b>Q: 提示找不到 src 模块？</b></summary>
+
+请确保从**项目根目录**运行脚本：
+```bash
+# ✅ 正确
+cd ZCodeProject
+python examples/demo.py
+
+# ❌ 错误（进入 examples 目录运行）
+cd examples
+python demo.py
+```
+</details>
+
+<details>
+<summary><b>Q: 摄像头无法打开？</b></summary>
+
+脚本会自动回退到内置测试图 `assets/test_circle.png`，无需摄像头即可验证识别功能。
+</details>
+
+<details>
+<summary><b>Q: RPi.GPIO 导入失败？</b></summary>
+
+`RPi.GPIO` 仅在树莓派环境可用。在 PC 上运行时，硬件控制脚本会导入失败，但视觉识别功能不受影响。
+</details>
+
+---
+
 ## 📄 许可证
 
 MIT License
 
 ---
 
-<p align="center">由 <a href="https://github.com/LONEFORME">LONEFORME</a> 维护</p>
+<div align="center">
+
+由 [LONEFORME](https://github.com/LONEFORME) 维护
+
+</div>
