@@ -1,8 +1,8 @@
 <div align="center">
 
-# ZCodeProject — 综合视觉识别系统
+# opencv-vision-rpi — OpenCV 综合视觉与硬件联动系统
 
-> OpenCV · 形状识别 · 颜色检测 · 树莓派 GPIO 控制
+> OpenCV · 形状识别 · 11 色自适应检测 · 树莓派 GPIO 硬件联动
 
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?logo=python)](https://www.python.org/)
 [![OpenCV](https://img.shields.io/badge/OpenCV-4.7+-5C3EE8?logo=opencv)](https://opencv.org/)
@@ -16,7 +16,7 @@
 
 ## 📋 概述
 
-**ZCodeProject** 是一个面向树莓派的综合视觉识别工程，核心由 `VisionSystem` 类实现，支持实时形状识别、颜色检测、圆形分类，并配套 GPIO 硬件控制脚本（风扇 PWM、蜂鸣器）。
+**opencv-vision-rpi** 是一个面向树莓派与嵌入式平台的综合计算机视觉识别与硬件联动工程。核心由 `VisionSystem` 类实现，支持实时几何形状识别、11 种颜色自适应分类、实心/空心圆分析，并配套树莓派 GPIO 硬件联动控制脚本（风扇 PWM 双向调速、蜂鸣器通断）。
 
 适用场景：竞赛视觉任务、创客项目、树莓派视觉教学。
 
@@ -38,7 +38,7 @@
 ## 📦 项目结构
 
 ```
-ZCodeProject/
+opencv-vision-rpi/
 ├── 📁 src/                     # 核心模块
 │   └── 综合视觉识别系统.py      # VisionSystem 类（形状/颜色/圆形识别）
 │
@@ -159,7 +159,7 @@ buzzer_off()  # 停
 请确保从**项目根目录**运行脚本：
 ```bash
 # ✅ 正确
-cd ZCodeProject
+cd opencv-vision-rpi
 python examples/demo.py
 
 # ❌ 错误（进入 examples 目录运行）
