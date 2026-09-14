@@ -1,6 +1,6 @@
 <div align="center">
 
-# opencv-vision-rpi — 综合计算机视觉识别系统
+# opencv-vision-system — 综合计算机视觉识别系统
 
 > OpenCV · 11 色自适应检测 · 几何轮廓分类 · 实心/空心圆判定 · 双线程并发架构
 
@@ -16,7 +16,7 @@
 
 ## 📋 概述
 
-**opencv-vision-rpi** 是一个基于 OpenCV 的高性能综合计算机视觉识别工程，核心由 `VisionSystem` 类封装实现。
+**opencv-vision-system** 是一个基于 OpenCV 的高性能综合计算机视觉识别工程，核心由 `VisionSystem` 类封装实现。
 
 系统采用多线程异步解耦架构，支持在摄像头、视频文件与单张图片输入源下，高帧率实时执行 **11 种颜色自适应提取**、**多边形几何形状分类**以及基于数学圆形度指标的**实心圆与空心圆环严密区分**。
 
@@ -39,7 +39,7 @@
 ## 📦 项目结构
 
 ```text
-opencv-vision-rpi/
+opencv-vision-system/
 ├── 📁 src/                     # 核心算法模块
 │   └── 综合视觉识别系统.py      # VisionSystem 核心类（颜色/形状/圆形分类器与双线程流水线）
 │
@@ -155,7 +155,7 @@ vs.release()
 请确保在**项目根目录**运行脚本：
 ```bash
 # ✅ 正确：在项目根目录下执行
-cd opencv-vision-rpi
+cd opencv-vision-system
 python examples/demo.py
 
 # ❌ 错误：cd 到 examples 目录后执行
